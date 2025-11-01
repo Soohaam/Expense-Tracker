@@ -3,30 +3,41 @@
 @tailwind utilities;
 
 
+
+/* Base scrollbar style */
 ::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
-    opacity: 0; /* Make scrollbar invisible by default */
-    transition: opacity 0.3s; /* Smooth transition effect */
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
+/* Scrollbar track */
 ::-webkit-scrollbar-track {
-    background: rgba(51, 28, 153, 0.932); /* Subtle background for the track, similar to #211D32 */
-    border-radius: 10px; /* Rounded corners for the track */
+  background: transparent; /* Keeps track invisible to blend with any theme */
 }
 
+/* Scrollbar thumb */
 ::-webkit-scrollbar-thumb {
-    background: rgba(35, 6, 116, 0.884); /* Semi-transparent thumb, similar to #6366F1 */
-    border-radius: 10px; /* Rounded corners for the thumb */
-    transition: background 0.9s ease; /* Smooth transition on hover */
+  background: rgba(128, 128, 128, 0.4); /* Neutral gray with transparency */
+  border-radius: 10px;
+  transition: background 0.3s ease;
 }
 
+/* Hover effect */
 ::-webkit-scrollbar-thumb:hover {
-    background: rgb(0, 0, 0); /* Darker thumb on hover, similar to #6366F1 */
+  background: rgba(128, 128, 128, 0.7); /* Slightly darker gray on hover */
 }
 
-/* Show scrollbar when scrolling or hovering */
+/* Show scrollbar when hovering */
 :hover::-webkit-scrollbar {
-    opacity: 1; /* Show scrollbar when hovering over the div */
+  opacity: 1;
+}
+
+/* Firefox compatibility */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.5) transparent;
 }
 
 @layer base {
