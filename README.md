@@ -10,8 +10,7 @@ This system enables users to efficiently track income and expenses with an **int
 - To develop a fully functional **Expense Tracker Web Application** using the **MERN Stack (MongoDB, Express, React, Node.js)**.  
 - To enable users to efficiently **manage income and expense transactions** with complete **CRUD operations**.  
 - To implement **advanced filtering** by transaction type, category, and date range.  
-- To provide **visual data representations** through interactive **charts and heatmaps**.  
-- To integrate **AI-powered financial review** using **Google Gemini API** for personalized recommendations.  
+- To provide **visual data representations** through interactive **charts and heatmaps**.   
 - To ensure **clean, reusable, and well-structured code** with **Redux Toolkit** for state management.
 
 ---
