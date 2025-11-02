@@ -194,6 +194,49 @@ class TransactionController {
       });
     }
   }
+
+  // Add this method to the existing TransactionController class
+
+async getMonthlyHeatmap(req, res) {
+  try {
+    const { year, month } = req.query;
+
+    // Validate inputs
+    if (!year || !month) {
+      return res.status(400).json({
+        success: false,
+        message: 'Year and month are required',
+      });
+    }
+
+    const yearInt = parseInt(year);
+    const monthInt = parseInt(month);
+
+    if (isNaN(yearInt) || isNaN(monthInt) || monthInt < 1 || monthInt > 12) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid year or month',
+      });
+    }
+
+    const heatmapData = await transactionService.getMonthlyHeatmap(
+      yearInt,
+      monthInt
+    );
+
+    res.status(200).json({
+      success: true,
+      data: heatmapData,
+    });
+  } catch (error) {
+    console.error('Heatmap Controller Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch heatmap data',
+      error: error.message,
+    });
+  }
+}
 }
 
 module.exports = new TransactionController();

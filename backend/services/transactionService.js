@@ -184,6 +184,93 @@ class TransactionService {
       throw error;
     }
   }
+async getMonthlyHeatmap(year, month) {
+  try {
+    // Use local timezone dates (not UTC)
+    const startDate = new Date(year, month - 1, 1, 0, 0, 0);
+    const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+    
+    console.log(`Fetching heatmap data for ${year}-${month}`);
+    console.log(`Date range: ${startDate} to ${endDate}`);
+
+    // Fetch all expense transactions for the month
+    const transactions = await Transaction.find({
+      type: 'expense',
+      date: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    }).sort({ date: 1 });
+
+    console.log(`Found ${transactions.length} expense transactions`);
+
+    // Get number of days in the month
+    const daysInMonth = new Date(year, month, 0).getDate();
+    
+    // Create daily spending map
+    const dailySpending = {};
+    
+    // Initialize all days with 0
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      dailySpending[dateKey] = {
+        date: dateKey, // Store as string to avoid timezone conversion
+        total: 0,
+        count: 0,
+        transactions: [],
+      };
+    }
+
+    // Populate with actual transaction data
+    transactions.forEach((transaction) => {
+      const date = new Date(transaction.date);
+      // Use local date components (not UTC)
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const dateKey = `${year}-${month}-${day}`;
+      
+      console.log(`Transaction date: ${transaction.date} -> dateKey: ${dateKey}`);
+      
+      if (dailySpending[dateKey]) {
+        dailySpending[dateKey].total += transaction.amount;
+        dailySpending[dateKey].count += 1;
+        dailySpending[dateKey].transactions.push({
+          amount: transaction.amount,
+          category: transaction.category,
+          description: transaction.description,
+        });
+      } else {
+        console.log(`⚠️ Date key ${dateKey} not found in dailySpending map`);
+      }
+    });
+
+    // Convert to array
+    const heatmapData = Object.values(dailySpending);
+
+    // Calculate statistics
+    const totalSpending = heatmapData.reduce((sum, day) => sum + day.total, 0);
+    const activeDays = heatmapData.filter((day) => day.total > 0).length;
+    const maxSpending = Math.max(...heatmapData.map((day) => day.total), 0);
+    const avgDaily = daysInMonth > 0 ? totalSpending / daysInMonth : 0;
+
+    return {
+      year,
+      month,
+      daysInMonth,
+      heatmapData,
+      stats: {
+        totalSpending,
+        activeDays,
+        maxSpending,
+        avgDaily: Math.round(avgDaily),
+      },
+    };
+  } catch (error) {
+    console.error('Error in getMonthlyHeatmap:', error);
+    throw error;
+  }
+}
 }
 
 module.exports = new TransactionService();

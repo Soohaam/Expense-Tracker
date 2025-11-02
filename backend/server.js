@@ -1,12 +1,19 @@
+// MUST BE FIRST - Load environment variables before anything else
+require('dotenv').config();
+
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const helmet = require("helmet");
 const connectDB = require("./config/db");
 const transactionRoutes = require("./routes/transactionRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
-// Load environment variables
-dotenv.config();
+// Debug: Log to verify API key is loaded
+console.log("🔍 Environment Variables Check:");
+console.log("PORT:", process.env.PORT);
+console.log("GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY);
+console.log("GEMINI_API_KEY length:", process.env.GEMINI_API_KEY?.length);
+console.log("GEMINI_API_KEY first 10 chars:", process.env.GEMINI_API_KEY?.substring(0, 10));
 
 // Connect to MongoDB
 connectDB();
@@ -25,6 +32,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -51,4 +59,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`📍 API endpoint: http://localhost:${PORT}/api/transactions`);
+  console.log(`🤖 AI endpoint: http://localhost:${PORT}/api/ai`);
 });
